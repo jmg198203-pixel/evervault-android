@@ -23,12 +23,11 @@ val evervaultEnclaveUrl: String = localProperties.getProperty("ENCLAVE_URL") ?: 
 
 android {
     namespace = "com.evervault.sampleapplication"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.evervault.sampleapplication"
         minSdk = 26
-        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -45,6 +44,10 @@ android {
         buildConfigField("String", "ENCLAVE_URL", "\"$evervaultEnclaveUrl\"")
     }
 
+    lint {
+        targetSdk = 36
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -55,11 +58,11 @@ android {
         buildConfig = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        jvmToolchain(JavaVersion.VERSION_11.toString().toInt())
     }
     buildFeatures {
         compose = true
@@ -74,10 +77,15 @@ android {
     }
 }
 
+dependencyLocking {
+    // Enable lock files for dependency versions.
+    lockAllConfigurations()
+}
+
 dependencies {
     implementation(project(":evervault-inputs"))
     implementation(project(":evervault-enclaves"))
-    implementation("com.evervault.sdk:evervault-core:1.2")
+    implementation(project(":evervault-core"))
     implementation("androidx.core:core-ktx:1.8.0")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.24"))
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
@@ -92,7 +100,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // GSON converter
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.5.1")
 
     testImplementation("junit:junit:4.13.2")
@@ -101,6 +109,9 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2022.10.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0-alpha03")
+    // Explicitly specify kotlin-stdlib-common version to ensure debugAndroidTestRuntimeClasspath is properly locked.
+    // Version must match the Kotlin plugin version in settings.gradle.kts (2.2.21).
+    androidTestImplementation("org.jetbrains.kotlin:kotlin-stdlib-common:2.2.21")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

@@ -5,15 +5,15 @@ import java.util.*
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization") // Third parties depend on this.
     id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.kotlin.plugin.serialization")
     id("maven-publish")
     id("signing")
 }
 
 android {
     namespace = "com.evervault.sdk.enclaves"
-    compileSdk = 33
+    compileSdk = 36
     val prop = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "version.properties")))
     }
@@ -22,6 +22,10 @@ android {
         minSdk = 26
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+    }
+
+    lint {
+        targetSdk = 36
     }
 
     buildTypes {
@@ -34,8 +38,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        jvmToolchain(JavaVersion.VERSION_11.toString().toInt())
     }
     buildFeatures {
         compose = true
@@ -60,11 +64,16 @@ android {
     }
 }
 
+dependencyLocking {
+    // Enable lock files for dependency versions.
+    lockAllConfigurations()
+}
+
 val kotlinVersion = "1.8.0"
 val kotlinCoroutineVersion = "1.7.3"
 
 dependencies {
-    implementation("com.evervault.sdk:evervault-core:1.2")
+    implementation(project(":evervault-core"))
     implementation("androidx.core:core-ktx:$kotlinVersion")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.24"))
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
@@ -72,7 +81,6 @@ dependencies {
     implementation("net.java.dev.jna:jna:5.17.0@aar")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion")
@@ -84,7 +92,7 @@ dependencies {
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion")
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("com.squareup.okhttp3:okhttp-tls:4.9.3")
+    androidTestImplementation("com.squareup.okhttp3:okhttp-tls:4.11.0")
 }
 
 publishing {

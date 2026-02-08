@@ -1,5 +1,29 @@
 # com.evervault.sdk
 
+## 2.3.2
+
+### Patch Changes
+
+- 7e20108: Update junit dependency to 4.13.2
+
+## 2.3.1
+
+### Patch Changes
+
+- 27c568f: Update dependenciesa to fix security vulnerabilities and restore kotlin serialization plugin
+
+## 2.3.0
+
+### Minor Changes
+
+- 58586d8: Upgrade bouncycastle dependency
+
+## 2.2.1
+
+### Patch Changes
+
+- 4f358bb: consolidate libraries into evervault-android
+
 ## 2.2.0
 
 ### Minor Changes

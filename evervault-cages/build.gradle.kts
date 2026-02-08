@@ -8,23 +8,24 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("maven-publish")
     id("signing")
-    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
     group = "com.evervault.sdk"
     namespace = "com.evervault.sdk.cages"
-    compileSdk = 33
+    compileSdk = 36
     val prop = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "version.properties")))
     }
     version = prop.getProperty("VERSION_NAME")
     defaultConfig {
         minSdk = 26
-        targetSdk = 33
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+    }
+
+    lint {
+        targetSdk = 36
     }
 
     buildTypes {
@@ -37,8 +38,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        jvmToolchain(JavaVersion.VERSION_11.toString().toInt())
     }
     buildFeatures {
         compose = true
@@ -63,17 +64,20 @@ android {
     }
 }
 
+dependencyLocking {
+    // Enable lock files for dependency versions.
+    lockAllConfigurations()
+}
+
 dependencies {
-    implementation("com.evervault.sdk:evervault-core:1.0")
+    implementation(project(":evervault-core"))
     implementation("androidx.core:core-ktx:1.8.0")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.24"))
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("net.java.dev.jna:jna:5.17.0@aar")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("junit:junit:4.12")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")

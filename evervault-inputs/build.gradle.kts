@@ -14,7 +14,7 @@ plugins {
 android {
     group = "com.evervault.sdk"
     namespace = "com.evervault.sdk.inputs"
-    compileSdk = 33
+    compileSdk = 36
     val prop = Properties().apply {
         load(FileInputStream(File(rootProject.rootDir, "version.properties")))
     }
@@ -24,6 +24,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+    }
+
+    lint {
+        targetSdk = 36
     }
 
     buildTypes {
@@ -36,8 +40,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        jvmToolchain(JavaVersion.VERSION_11.toString().toInt())
     }
     buildFeatures {
         compose = true
@@ -62,11 +66,16 @@ android {
     }
 }
 
+dependencyLocking {
+    // Enable lock files for dependency versions.
+    lockAllConfigurations()
+}
+
 val composeActivityVersion = "1.9.0"
 
 dependencies {
     api("com.github.evervault:evervault-pay:android-v0.0.28")
-    implementation("com.evervault.sdk:evervault-core:1.2")
+    implementation(project(":evervault-core"))
     implementation("androidx.core:core-ktx:1.12.0")
     implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
